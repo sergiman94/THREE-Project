@@ -1,6 +1,6 @@
-# CustomCloset
+# Rollercoaster
 
-This project is about making a customizable closet where you can change each object.
+This project is about testing the physics from the web library threejs making wild and crazy things with gravity and stuff
 
 ## Deployment
 
@@ -18,4 +18,4 @@ Open the index.html file only with google chrome
 
 ## Acknowledgments
 
-* For now it's only the scene working with a Pirateship and OrbitControl.
+* Too much geometry 
