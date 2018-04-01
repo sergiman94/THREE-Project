@@ -53,6 +53,12 @@ function PObjects(){
     return threeObject;
   }
 
+  this.floor = function () {
+    pos.set( 0, - 0.5, 0 );
+    quat.set( 0, 0, 0, 1 );
+    this.createParalellepiped(2000, 1, 2000, 0, pos, quat, new THREE.MeshPhongMaterial( { color: 0xFFFFFF } ));
+  }
+
 }
 
 
