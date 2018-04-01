@@ -26,26 +26,6 @@ function FloorObject(){
   }
 
 
-  this.ground = function(){
-
-    var pos = new THREE.Vector3();
-				var quat = new THREE.Quaternion();
-				// Ground
-				pos.set( 0, - 0.5, 0 );
-				quat.set( 0, 0, 0, 1 );
-				var ground = createParalellepiped( 40, 1, 40, 0, pos, quat, new THREE.MeshPhongMaterial( { color: 0xFFFFFF } ) );
-				ground.castShadow = true;
-				ground.receiveShadow = true;
-				textureLoader.load( "crate0/crate0_diffuse.jpg", function( texture ) {
-					texture.wrapS = THREE.RepeatWrapping;
-					texture.wrapT = THREE.RepeatWrapping;
-					texture.repeat.set( 40, 40 );
-					ground.material.map = texture;
-					ground.material.needsUpdate = true;
-				} );
-
-  }
-
   floorTextures("crate0/crate0_diffuse.jpg","crate0/crate0_bump.jpg", "crate0/crate0_normal.jpg");
 
 }
