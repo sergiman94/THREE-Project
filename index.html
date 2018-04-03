@@ -14,11 +14,13 @@
 				margin: 0px;
 				overflow: hidden;
 			}
+
 		</style>
 
 	</head>
 	<body>
 	<div id="container"><br /><br /><br /><br /><br /></div>
+	<div id="speedometer">0.0 km/h</div>
 
 		<script src="floorObject.js"></script>
 		<script src="light.js"></script>
@@ -32,11 +34,12 @@
 		<script src="OrbitControls.js"></script>
 		<script src="ammo.js"></script>
 		<script src="PObjects.js"></script>
+		<script src="PObjects.js"></script>
+		<!-- <script src="ammo2.js"></script> -->
 
 	<script>
 
-		// ----------------------------------------------------------------\\
-
+		// -------------------------GLOBAL VARIABLES-------------------------------\\
 
 		var clock = new THREE.Clock();
 		var floorObject;
@@ -69,9 +72,21 @@
 		physicsWorld.setGravity( gravity );
 		physicsWorld.getWorldInfo().set_m_gravity( gravity);
 
+		model = new Model();
+		floorObject = new FloorObject();
+		crateObject = new CrateObject();
+		light = new Light();
+		objects = new PObjects();
+
+		var baseMaterial = new THREE.MeshPhongMaterial( { color: 0x606060 });
+		var material1 = new THREE.MeshPhongMaterial({ color: 0xffff88 });
+
+		// -----------------------MAIN FUNCTIONS-----------------------------------\\
 
 		init();
 		animate();
+
+		// ------------------INITIALIZATION FUNCTIONS------------------------------\\
 
 		function init(){
 
@@ -87,7 +102,9 @@
 
 			container = document.getElementById( 'container' );
 
+
 			camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.2, 2000 );
+
 
 			scene = new THREE.Scene();
 			scene.background = new THREE.Color( 0xbfd1e5 );
@@ -108,54 +125,99 @@
 
 		}
 
-		function createObjects() {
-			//instances
-			model = new Model();
-			floorObject = new FloorObject();
-			crateObject = new CrateObject();
-			light = new Light();
-			objects = new PObjects();
+		function animate(){
+			requestAnimationFrame(animate);
+			var deltaTime = clock.getDelta();
 
-			//objects
-			//floorObject.show(2000,2000,10,100);
-			//model.showModelWithTexture(0, 0, 0, 5, "models/Pirateship.mtl", "models/Pirateship.obj");
+			updatePhysics(deltaTime);
+			controls.update(deltaTime);
+			renderer.render(scene, camera);
+			stats.update();
+		}
 
-			// light objects
-			light.pointLight(-8,6,-3, 0xffffff,0.5, 15);
+		function render() {
+			renderer = new THREE.WebGLRenderer();
+			renderer.setPixelRatio( window.devicePixelRatio );
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			// processClick();
+			renderer.shadowMap.enabled = true;
 
-			ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
-	    ambientLight.position.set(0,10,0);
-			scene.add(ambientLight);
+		}
 
-			//floor
-			objects.floor()
+		function monitorPerformance() {
+			stats = new Stats();
+			stats.domElement.style.position = 'absolute';
+			stats.domElement.style.top = '0px';
+			container.appendChild( stats.domElement );
+			window.addEventListener( 'keydown', keydown);
+			window.addEventListener( 'keyup', keyup);
+			window.addEventListener( 'resize', onWindowResize, false );
+			window.addEventListener('mousedown', clicked, false);
+		}
 
-			// pool table
-			table();
+		function onWindowResize() {
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+			renderer.setSize( window.innerWidth, window.innerHeight );
+		}
 
+		function updatePhysics(deltaTime){
+
+			physicsWorld.stepSimulation(deltaTime, 10);
+
+			// Update rigid bodies
+				for ( var i = 0, il = rigidBodies.length; i < il; i++ ) {
+					var objThree = rigidBodies[ i ];
+					var objPhys = objThree.userData.physicsBody;
+					var ms = objPhys.getMotionState();
+					if ( ms ) {
+						ms.getWorldTransform( transformAux1 );
+						var p = transformAux1.getOrigin();
+						var q = transformAux1.getRotation();
+						objThree.position.set( p.x(), p.y(), p.z() );
+						objThree.quaternion.set( q.x(), q.y(), q.z(), q.w() );
+					}
+				}
+
+		}
+
+		function controls() {
+			controls = new THREE.OrbitControls( camera );
+			controls.target.set( 0, 2, 0 );
+			controls.enableZoom = true;
 
 		}
 
 
-		function table(){
+		//----------------------------CONTROLS FUNCTIONS---------------------------\\
 
-			var baseMaterial = new THREE.MeshPhongMaterial( { color: 0x606060 });
-			var material1 = new THREE.MeshPhongMaterial({ color: 0xffff88 });
-
-			// create base
-			pos.set(3,5,0);
-			quat.set(0,0,0,1);
-			objects.createParalellepiped( 50, 1, 100, 50, pos, quat, baseMaterial);
-
-			pos.set(3,5,0);
-			quat.set(0,0,0,1);
-			objects.createParalellepiped(50, 1, 50, 50, pos, quat, material1);
-
+		function controls() {
+			controls = new THREE.OrbitControls( camera );
+			controls.target.set( 0, 2, 0 );
+			controls.enableZoom = true;
 
 		}
 
+		//----------------------------KEYBOARD AND MOUSE FUNCTIONS-----------------\\
 
-		//----------------------------------------------------------------
+		function keyup(e) {
+			if(keysActions[e.code]) {
+				actions[keysActions[e.code]] = false;
+				e.preventDefault();
+				e.stopPropagation();
+				return false;
+			}
+		}
+
+		function keydown(e) {
+			if(keysActions[e.code]) {
+				console.log("keydown");
+				actions[keysActions[e.code]] = true;
+				e.preventDefault();
+				e.stopPropagation();
+				return false;
+			}
+		}
 
 		function clicked(){
 
@@ -192,73 +254,57 @@
 			}
 		};
 
-		function animate(){
-			requestAnimationFrame(animate);
+		//-------------------------OBJECT FUNCTIONS--------------------------------\\
 
-			var deltaTime = clock.getDelta();
-			updatePhysics(deltaTime  );
+		function createObjects() {
 
-			renderer.render(scene, camera);
-			stats.update();
+			//objects
+			//floorObject.show(2000,2000,10,100);
+			//model.showModelWithTexture(0, 0, 0, 5, "models/Pirateship.mtl", "models/Pirateship.obj");
+
+			// light objects
+			light.pointLight(-8,6,-3, 0xffffff,0.5, 15);
+
+			ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+			ambientLight.position.set(0,10,0);
+			scene.add(ambientLight);
+
+			//floor
+			objects.floor();
+
+			// pool table
+			table();
+
+			//vehicle
+
+
 		}
 
-		function render() {
-			renderer = new THREE.WebGLRenderer();
-			renderer.setPixelRatio( window.devicePixelRatio );
-			renderer.setSize( window.innerWidth, window.innerHeight );
-			// processClick();
-			renderer.shadowMap.enabled = true;
+		function table(){
 
-		}
+			// create base
+			pos.set(3,5,0);
+			quat.set(0,0,0,1);
+			objects.createParalellepiped( 50, 1, 50, 50, pos, quat, baseMaterial);
 
-		function monitorPerformance() {
-			stats = new Stats();
-			stats.domElement.style.position = 'absolute';
-			stats.domElement.style.top = '0px';
-			container.appendChild( stats.domElement );
-			window.addEventListener( 'resize', onWindowResize, false );
-			window.addEventListener('mousedown', clicked, false);
-		}
+			// walls
+			pos.set(3,5,24);
+			quat.set(0,0,0,1);
+			objects.createParalellepiped(50, 1, 2, 50, pos, quat, material1);
 
-		function controls() {
-			controls = new THREE.OrbitControls( camera );
-			controls.target.set( 0, 2, 0 );
-			controls.enableZoom = true;
-			controls.update();
-		}
+			pos.set(3,5,-24);
+			quat.set(0,0,0,1);
+			objects.createParalellepiped(50, 1, 2, 50, pos, quat, material1);
 
-		// WINDOW RESIZE
-		function onWindowResize() {
-			camera.aspect = window.innerWidth / window.innerHeight;
-			camera.updateProjectionMatrix();
-			renderer.setSize( window.innerWidth, window.innerHeight );
-		}
-
-		function updatePhysics(deltaTime){
-
-			physicsWorld.stepSimulation(deltaTime, 10);
-
-			// Update rigid bodies
-				for ( var i = 0, il = rigidBodies.length; i < il; i++ ) {
-					var objThree = rigidBodies[ i ];
-					var objPhys = objThree.userData.physicsBody;
-					var ms = objPhys.getMotionState();
-					if ( ms ) {
-						ms.getWorldTransform( transformAux1 );
-						var p = transformAux1.getOrigin();
-						var q = transformAux1.getRotation();
-						objThree.position.set( p.x(), p.y(), p.z() );
-						objThree.quaternion.set( q.x(), q.y(), q.z(), q.w() );
-					}
-				}
+			pos.set(3,5,14);
+			quat.set(0,0,0,1);
+			objects.createParalellepiped(50, 1, 2, 50, pos, quat, material1);
 
 		}
 
 
-		// ----------------------------------------------------------------\\
+		// ------------------------------------------------------------------------\\
 	</script>
-
-
 	</body>
 </html>
 }

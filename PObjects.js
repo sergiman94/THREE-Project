@@ -30,6 +30,8 @@ physicsWorld.setGravity( gravity );
 physicsWorld.getWorldInfo().set_m_gravity( gravity);
 
 
+
+
 function PObjects(){
 
   this.createParalellepiped = function ( sx, sy, sz, mass, pos, quat, material) {
@@ -41,6 +43,7 @@ function PObjects(){
 
     threeObject.castShadow = true
     threeObject.receiveShadow = true;
+
 
     // textureLoader.load( "models/grid.png", function( texture ) {
     // texture.wrapS = THREE.RepeatWrapping;
@@ -61,6 +64,13 @@ function PObjects(){
 
 }
 
+function CustomSinCurve( scale ) {
+
+	THREE.Curve.call( this );
+
+	this.scale = ( scale === undefined ) ? 1 : scale;
+
+}
 
 function createRigidBody( threeObject, physicsShape, mass, pos, quat ) {
 
