@@ -22,19 +22,18 @@
 	<div id="container"><br /><br /><br /><br /><br /></div>
 	<div id="speedometer">0.0 km/h</div>
 
-		<script src="floorObject.js"></script>
-		<script src="light.js"></script>
-		<script src="Model.js"></script>
-		<script src="stats.min.js"></script>
-		<script src="crateObject.js"></script>
-		<script src="three.js"></script>
-    <script src="DDSLoader.js"></script>
-    <script src="MTLLoader.js"></script>
-    <script src="OBJLoader.js"></script>
-		<script src="OrbitControls.js"></script>
-		<script src="ammo.js"></script>
-		<script src="PObjects.js"></script>
-		<script src="PObjects.js"></script>
+		<script src="MyFiles/floorObject.js"></script>
+		<script src="MyFiles/light.js"></script>
+		<script src="MyFiles/Model.js"></script>
+		<script src="ThreeFiles/stats.min.js"></script>
+		<script src="MyFiles/crateObject.js"></script>
+		<script src="ThreeFiles/three.js"></script>
+    <script src="ThreeFiles/DDSLoader.js"></script>
+    <script src="ThreeFiles/MTLLoader.js"></script>
+    <script src="ThreeFiles/OBJLoader.js"></script>
+		<script src="ThreeFiles/OrbitControls.js"></script>
+		<script src="ThreeFiles/ammo.js"></script>
+		<script src="MyFiles/PObjects.js"></script>
 		<!-- <script src="ammo2.js"></script> -->
 
 	<script>
@@ -149,8 +148,6 @@
 			stats.domElement.style.position = 'absolute';
 			stats.domElement.style.top = '0px';
 			container.appendChild( stats.domElement );
-			window.addEventListener( 'keydown', keydown);
-			window.addEventListener( 'keyup', keyup);
 			window.addEventListener( 'resize', onWindowResize, false );
 			window.addEventListener('mousedown', clicked, false);
 		}
@@ -181,14 +178,6 @@
 
 		}
 
-		function controls() {
-			controls = new THREE.OrbitControls( camera );
-			controls.target.set( 0, 2, 0 );
-			controls.enableZoom = true;
-
-		}
-
-
 		//----------------------------CONTROLS FUNCTIONS---------------------------\\
 
 		function controls() {
@@ -199,25 +188,6 @@
 		}
 
 		//----------------------------KEYBOARD AND MOUSE FUNCTIONS-----------------\\
-
-		function keyup(e) {
-			if(keysActions[e.code]) {
-				actions[keysActions[e.code]] = false;
-				e.preventDefault();
-				e.stopPropagation();
-				return false;
-			}
-		}
-
-		function keydown(e) {
-			if(keysActions[e.code]) {
-				console.log("keydown");
-				actions[keysActions[e.code]] = true;
-				e.preventDefault();
-				e.stopPropagation();
-				return false;
-			}
-		}
 
 		function clicked(){
 
