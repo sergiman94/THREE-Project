@@ -30,9 +30,49 @@ physicsWorld.setGravity( gravity );
 physicsWorld.getWorldInfo().set_m_gravity( gravity);
 
 
-
+var mass = 1;
 
 function PObjects(){
+
+  this.loadModel = function (x, y, z, sx, sy, sz, modelObj, mass) {
+    var objLoader = new THREE.OBJLoader();
+  	objLoader.load("models/Pirateship.obj", function(mesh){
+
+
+      mesh.scale.set(0.5, 0.5, 0.5);
+
+      mesh.traverse(function(node){
+  			if( node instanceof THREE.Mesh ){
+  				node.castShadow = true;
+  				node.receiveShadow = true;
+  			}
+  		});
+
+      var pos = new THREE.Vector3();
+  		var quat = new THREE.Quaternion();
+      //var mass = 10;
+
+      pos.set(x, y, z);
+			quat.set(0,0,0,1);
+      var amoVector = new Ammo.btVector3( sx * 0.5, sy * 0.5, sz * 0.5 );
+
+
+      amoVector.visible = true;
+      var shape = new Ammo.btBoxShape( amoVector);
+
+      shape.setMargin(0.02);
+      createRigidBody( mesh, shape, mass, pos, quat );
+
+
+
+  		// scene.add(mesh);
+  		// mesh.position.set(0, 0, 0);
+  		// mesh.rotation.y = -Math.PI/rotate;
+
+  	});
+
+  }
+
 
   this.createParalellepiped = function ( sx, sy, sz, mass, pos, quat, material) {
 
@@ -61,14 +101,6 @@ function PObjects(){
     quat.set( 0, 0, 0, 1 );
     this.createParalellepiped(2000, 1, 2000, 0, pos, quat, new THREE.MeshPhongMaterial( { color: 0xFFFFFF } ));
   }
-
-}
-
-function CustomSinCurve( scale ) {
-
-	THREE.Curve.call( this );
-
-	this.scale = ( scale === undefined ) ? 1 : scale;
 
 }
 
