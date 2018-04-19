@@ -73,7 +73,6 @@ function PObjects(){
 
   }
 
-
   this.createParalellepiped = function ( sx, sy, sz, mass, pos, quat, material) {
 
     var threeObject = new THREE.Mesh( new THREE.BoxGeometry( sx, sy, sz, 1, 1, 1 ), material );
@@ -100,6 +99,31 @@ function PObjects(){
     pos.set( 0, - 0.5, 0 );
     quat.set( 0, 0, 0, 1 );
     this.createParalellepiped(2000, 1, 2000, 0, pos, quat, new THREE.MeshPhongMaterial( { color: 0xFFFFFF } ));
+  }
+
+  this.ball = function () {
+
+    // Creates a ball
+    var ballMass = 0.01;
+    var ballRadius = 2;
+    var ball = new THREE.Mesh( new THREE.SphereGeometry( ballRadius, 18, 16 ), ballMaterial );
+
+    ball.castShadow = true;
+    ball.receiveShadow = true;
+
+    var ballShape = new Ammo.btSphereShape( ballRadius );
+
+    ballShape.setMargin( margin );
+    pos.copy( raycaster.ray.direction );
+    pos.set( 15,15,0 );
+    quat.set( 0, 0, 0, 1 );
+
+    var ballBody = createRigidBody( ball, ballShape, ballMass, pos, quat );
+    ballBody.setFriction( 0.5 );
+    //pos.copy( raycaster.ray.direction );
+    //pos.multiplyScalar( 14 );
+    //ballBody.setLinearVelocity( new Ammo.btVector3( pos.x, pos.y, pos.z ) );
+
   }
 
 }

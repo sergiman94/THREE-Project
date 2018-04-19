@@ -35,7 +35,7 @@
 		<script src="ThreeFiles/OrbitControls.js"></script>
 		<script src="ThreeFiles/ammo.js"></script>
 		<script src="MyFiles/PObjects.js"></script>
-		
+
 		<!-- <script src="ammo2.js"></script> -->
 
 	<script>
@@ -45,7 +45,7 @@
 		var clock = new THREE.Clock();
 		var floorObject;
 		var clickRequest = false;
-		var mouseCoords = new THREE.Vector2();
+		var mouseCoords = new THREE.Vector2(), intersected;
 
 		// Graphics variables
 		var container, stats;
@@ -61,7 +61,7 @@
 		var physicsWorld;
 		var rigidBodies = [];
 		var raycaster = new THREE.Raycaster();
-		var ballMaterial = new THREE.MeshPhongMaterial( { color: 0x202020 } );
+		var material2 = new THREE.MeshPhongMaterial( { color: 0x200020 } );
 		var transformAux1 = new Ammo.btTransform()
 
 		var collisionConfiguration = new Ammo.btSoftBodyRigidBodyCollisionConfiguration();
@@ -69,6 +69,7 @@
 		var broadphase = new Ammo.btDbvtBroadphase();
 		var solver = new Ammo.btSequentialImpulseConstraintSolver();
 		var softBodySolver = new Ammo.btDefaultSoftBodySolver();
+		var group = new THREE.Group();
 		physicsWorld = new Ammo.btSoftRigidDynamicsWorld( dispatcher, broadphase, solver, collisionConfiguration, softBodySolver)
 		physicsWorld.setGravity( gravity );
 		physicsWorld.getWorldInfo().set_m_gravity( gravity);
@@ -78,9 +79,10 @@
 		crateObject = new CrateObject();
 		light = new Light();
 		objects = new PObjects();
+		object2 = new PObjects();
 
 		var baseMaterial = new THREE.MeshPhongMaterial( { color: 0x606060 });
-		var material1 = new THREE.MeshPhongMaterial({ color: 0xffff88 });
+		var material1 = new THREE.MeshPhongMaterial({ color: 0xffffff });
 
 		// -----------------------MAIN FUNCTIONS-----------------------------------\\
 
@@ -110,7 +112,7 @@
 			scene = new THREE.Scene();
 			scene.background = new THREE.Color( 0xbfd1e5 );
 			scene.fog = new THREE.Fog( 0xE6E6E6, 0, 750 );
-			camera.position.set( 0, 15, 30);
+			camera.position.set( 46, 32, 43);
 
 			//Orbit controls
 			controls();
@@ -124,6 +126,8 @@
 			//monitor performance
 			monitorPerformance();
 
+
+			scene.add(group);
 		}
 
 		function animate(){
@@ -193,34 +197,80 @@
 
 		function clicked(){
 
+
 			if ( ! clickRequest ) {
 
 				mouseCoords.set(( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1);  ;
 				// clickRequest = true
 
-				console.log("in");
+				console.log("clicked");
 				raycaster.setFromCamera( mouseCoords, camera );
 
-				// Creates a ball
-				var ballMass = 3;
-				var ballRadius = 0.4;
-				var ball = new THREE.Mesh( new THREE.SphereGeometry( ballRadius, 18, 16 ), ballMaterial );
+				var intersects = raycaster.intersectObjects(scene.children);
 
-				ball.castShadow = true;
-				ball.receiveShadow = true;
+				if (intersects.length > 0){
+					if (intersected != intersects[0].object){
 
-				var ballShape = new Ammo.btSphereShape( ballRadius );
+						if ( intersected) intersected.material.emissive.setHex( intersected.currentHex );
 
-				ballShape.setMargin( margin );
-				pos.copy( raycaster.ray.direction );
-				pos.add( raycaster.ray.origin );
-				quat.set( 0, 0, 0, 1 );
+						intersected = intersects[0].object;
+						intersected.currentHex = intersected.material.emissive.getHex();
+						intersected.material.emissive.setHex( 0xff0000 );
 
-				var ballBody = createRigidBody( ball, ballShape, ballMass, pos, quat );
-				ballBody.setFriction( 0.5 );
-				pos.copy( raycaster.ray.direction );
-				pos.multiplyScalar( 14 );
-				ballBody.setLinearVelocity( new Ammo.btVector3( pos.x, pos.y, pos.z ) );
+						var Xpos = intersected.position.x
+						var Ypos = intersected.position.y
+						var Zpos = intersected.position.z
+
+						
+
+
+
+
+						//intersected = new Vector3(Xpos +14, Ypos, Zpos);
+
+						// var movement = new THREE.Vector3(Xpos , Ypos, Zpos);
+						// //
+						// intersected.position.set(movement);
+
+						//intersected.position.set(Xpos, Ypos, Zpos);
+
+
+						console.log(intersected);
+
+						//intersected.setLinearVelocity( new Ammo.btVector3( Xpos, Ypos, Zpos) );
+
+						//console.log(Xpos, Ypos, Zpos);
+					}
+
+				}else{
+
+					if ( intersected ) intersected.material.emissive.setHex( intersected.currentHex );
+					intersected = null;
+
+				}
+
+
+
+				// // Creates a ball
+				// var ballMass = 3;
+				// var ballRadius = 0.4;
+				// var ball = new THREE.Mesh( new THREE.SphereGeometry( ballRadius, 18, 16 ), ballMaterial );
+				//
+				// ball.castShadow = true;
+				// ball.receiveShadow = true;
+				//
+				// var ballShape = new Ammo.btSphereShape( ballRadius );
+				//
+				// ballShape.setMargin( margin );
+				// pos.copy( raycaster.ray.direction );
+				// pos.add( raycaster.ray.origin );
+				// quat.set( 0, 0, 0, 1 );
+				//
+				// var ballBody = createRigidBody( ball, ballShape, ballMass, pos, quat );
+				// ballBody.setFriction( 0.5 );
+				// pos.copy( raycaster.ray.direction );
+				// pos.multiplyScalar( 14 );
+				// ballBody.setLinearVelocity( new Ammo.btVector3( pos.x, pos.y, pos.z ) );
 
 				clickRequest = false;
 			}
@@ -242,18 +292,23 @@
 			scene.add(ambientLight);
 
 			//floor
-			objects.floor();
+		 	objects.floor();
+
 
 			// pool table
 			table();
 
-			//models
+			//ship model
 			objects.loadModel(3, 5, 0, 1, 0.5, 1, "models/Pirateship.obj", 10);
 
 			// things
 			pos.set(3,5,14);
 			quat.set(0,50,0,1);
-			objects.createParalellepiped(5, 5, 0.5, 50, pos, quat, material1);
+			objects.createParalellepiped(5, 5, 0.5, 50, pos, quat, material2);
+
+			// ball
+
+			objects.ball();
 
 
 		}
