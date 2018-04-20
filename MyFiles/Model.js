@@ -44,21 +44,24 @@ function Model() {
   	});
   }
 
-  this.modelLoadWithJSON = function (x, y, z, rotate, jsonModel) {
+  this.modelLoadWithJSON = function (objPath) {
 
     mixer = new THREE.AnimationMixer( scene );
 		var loader = new THREE.JSONLoader();
 
-    loader.load( jsonModel, function ( geometry, materials ) {
-			// adjust color a bit
-			var material = materials[ 0 ];
-			material.morphTargets = true;
-			material.color.setHex( 0xFACC2E );
+    loader.load( objPath, function ( geometry, materials ) {
+			//adjust color a bit
+		  //var material = materials[0];
+
+			//materials.morphTargets = true;
+			//materials.color.setHex( 0xFACC2E );
 
 			var mesh = new THREE.Mesh( geometry, materials );
 
-      mesh.position.set(x,y,z);
-      mesh.rotation.y = -Math.PI/rotate;
+      mesh.scale.set(40, 40, 40);
+
+      mesh.position.set(-80,50,-14);
+      mesh.rotation.y = -Math.PI/2;
 			mesh.matrixAutoUpdate = false;
 			mesh.updateMatrix();
 			scene.add( mesh );

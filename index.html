@@ -35,6 +35,7 @@
 		<script src="ThreeFiles/OrbitControls.js"></script>
 		<script src="ThreeFiles/ammo.js"></script>
 		<script src="MyFiles/PObjects.js"></script>
+		<script src="MyFiles/AxisHelper.js"></script>
 
 		<!-- <script src="ammo2.js"></script> -->
 
@@ -42,6 +43,7 @@
 
 		// -------------------------GLOBAL VARIABLES-------------------------------\\
 
+		var axis;
 		var clock = new THREE.Clock();
 		var floorObject;
 		var clickRequest = false;
@@ -80,6 +82,8 @@
 		light = new Light();
 		objects = new PObjects();
 		object2 = new PObjects();
+		axis = new Axis();
+
 
 		var baseMaterial = new THREE.MeshPhongMaterial( { color: 0x606060 });
 		var material1 = new THREE.MeshPhongMaterial({ color: 0xffffff });
@@ -112,7 +116,7 @@
 			scene = new THREE.Scene();
 			scene.background = new THREE.Color( 0xbfd1e5 );
 			scene.fog = new THREE.Fog( 0xE6E6E6, 0, 750 );
-			camera.position.set( 46, 32, 43);
+			camera.position.set( -1.5, 12, 27);
 
 			//Orbit controls
 			controls();
@@ -206,71 +210,71 @@
 				console.log("clicked");
 				raycaster.setFromCamera( mouseCoords, camera );
 
-				var intersects = raycaster.intersectObjects(scene.children);
-
-				if (intersects.length > 0){
-					if (intersected != intersects[0].object){
-
-						if ( intersected) intersected.material.emissive.setHex( intersected.currentHex );
-
-						intersected = intersects[0].object;
-						intersected.currentHex = intersected.material.emissive.getHex();
-						intersected.material.emissive.setHex( 0xff0000 );
-
-						var Xpos = intersected.position.x
-						var Ypos = intersected.position.y
-						var Zpos = intersected.position.z
-
-						
-
-
-
-
-						//intersected = new Vector3(Xpos +14, Ypos, Zpos);
-
-						// var movement = new THREE.Vector3(Xpos , Ypos, Zpos);
-						// //
-						// intersected.position.set(movement);
-
-						//intersected.position.set(Xpos, Ypos, Zpos);
-
-
-						console.log(intersected);
-
-						//intersected.setLinearVelocity( new Ammo.btVector3( Xpos, Ypos, Zpos) );
-
-						//console.log(Xpos, Ypos, Zpos);
-					}
-
-				}else{
-
-					if ( intersected ) intersected.material.emissive.setHex( intersected.currentHex );
-					intersected = null;
-
-				}
-
-
-
-				// // Creates a ball
-				// var ballMass = 3;
-				// var ballRadius = 0.4;
-				// var ball = new THREE.Mesh( new THREE.SphereGeometry( ballRadius, 18, 16 ), ballMaterial );
+				// var intersects = raycaster.intersectObjects(scene.children);
 				//
-				// ball.castShadow = true;
-				// ball.receiveShadow = true;
+				// if (intersects.length > 0){
+				// 	if (intersected != intersects[0].object){
 				//
-				// var ballShape = new Ammo.btSphereShape( ballRadius );
+				// 		if ( intersected) intersected.material.emissive.setHex( intersected.currentHex );
 				//
-				// ballShape.setMargin( margin );
-				// pos.copy( raycaster.ray.direction );
-				// pos.add( raycaster.ray.origin );
-				// quat.set( 0, 0, 0, 1 );
+				// 		intersected = intersects[0].object;
+				// 		intersected.currentHex = intersected.material.emissive.getHex();
+				// 		intersected.material.emissive.setHex( 0xff0000 );
 				//
-				// var ballBody = createRigidBody( ball, ballShape, ballMass, pos, quat );
-				// ballBody.setFriction( 0.5 );
-				// pos.copy( raycaster.ray.direction );
-				// pos.multiplyScalar( 14 );
-				// ballBody.setLinearVelocity( new Ammo.btVector3( pos.x, pos.y, pos.z ) );
+				// 		var Xpos = intersected.position.x
+				// 		var Ypos = intersected.position.y
+				// 		var Zpos = intersected.position.z
+				//
+				//
+				//
+				//
+				//
+				//
+				// 		//intersected = new Vector3(Xpos +14, Ypos, Zpos);
+				//
+				// 		// var movement = new THREE.Vector3(Xpos , Ypos, Zpos);
+				// 		// //
+				// 		// intersected.position.set(movement);
+				//
+				// 		//intersected.position.set(Xpos, Ypos, Zpos);
+				//
+				//
+				// 		console.log(intersected);
+				//
+				// 		//intersected.setLinearVelocity( new Ammo.btVector3( Xpos, Ypos, Zpos) );
+				//
+				// 		//console.log(Xpos, Ypos, Zpos);
+				// 	}
+				//
+				// }else{
+				//
+				// 	if ( intersected ) intersected.material.emissive.setHex( intersected.currentHex );
+				// 	intersected = null;
+				//
+				// }
+
+				//_----------------------------------------
+
+				// Creates a ball
+				var ballMass = 3;
+				var ballRadius = 0.4;
+				var ball = new THREE.Mesh( new THREE.SphereGeometry( ballRadius, 18, 16 ), ballMaterial );
+
+				ball.castShadow = true;
+				ball.receiveShadow = true;
+
+				var ballShape = new Ammo.btSphereShape( ballRadius );
+
+				ballShape.setMargin( margin );
+				pos.copy( raycaster.ray.direction );
+				pos.add( raycaster.ray.origin );
+				quat.set( 0, 0, 0, 1 );
+
+				var ballBody = createRigidBody( ball, ballShape, ballMass, pos, quat );
+				ballBody.setFriction( 0.5 );
+				pos.copy( raycaster.ray.direction );
+				pos.multiplyScalar( 14 );
+				ballBody.setLinearVelocity( new Ammo.btVector3( pos.x, pos.y, pos.z ) );
 
 				clickRequest = false;
 			}
@@ -294,21 +298,42 @@
 			//floor
 		 	objects.floor();
 
-
 			// pool table
 			table();
 
 			//ship model
-			objects.loadModel(3, 5, 0, 1, 0.5, 1, "models/Pirateship.obj", 10);
+			//objects.loadOBJModel(3, 5, 10, 1, 0.5, 1, "models/Pirateship.obj", 10);
+
+			objects.loadOBJModel(0,5,0,1,0.5,1,"table/Billiard_2.obj", 2);
 
 			// things
 			pos.set(3,5,14);
 			quat.set(0,50,0,1);
 			objects.createParalellepiped(5, 5, 0.5, 50, pos, quat, material2);
 
-			// ball
+			//Axis
+			//axis.show(200);
 
+			// ball
 			objects.ball();
+
+			var baseUrl = "table/base.json";
+			var edgesUrl = "table/edges.json";
+			var feltUrl = "table/felt.json";
+			var pocketBottomsUrl = "table/pocket_bottoms.json";
+			var pocketsUrl = "table/felt.json"
+
+			//billiard
+			//model.modelLoadWithJSON(baseUrl);
+
+			//model.modelLoadWithJSON(edgesUrl);
+
+			//model.modelLoadWithJSON(feltUrl);
+
+			//model.modelLoadWithJSON(pocketBottomsUrl);
+			//model.modelLoadWithJSON(pocketsUrl);
+
+			//objects.loadJSONModel(5,5,5, baseUrl);
 
 
 		}
@@ -316,7 +341,7 @@
 		function table(){
 
 			// create base
-			pos.set(3,5,0);
+			pos.set(0,0,0);
 			quat.set(0,0,0,1);
 			objects.createParalellepiped( 50, 1, 50, 50, pos, quat, baseMaterial);
 

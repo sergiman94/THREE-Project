@@ -34,12 +34,12 @@ var mass = 1;
 
 function PObjects(){
 
-  this.loadModel = function (x, y, z, sx, sy, sz, modelObj, mass) {
+  this.loadOBJModel = function (x, y, z, sx, sy, sz, modelObj, mass) {
     var objLoader = new THREE.OBJLoader();
-  	objLoader.load("models/Pirateship.obj", function(mesh){
+  	objLoader.load(modelObj, function(mesh){
 
 
-      mesh.scale.set(0.5, 0.5, 0.5);
+      mesh.scale.set(5, 5, 5);
 
       mesh.traverse(function(node){
   			if( node instanceof THREE.Mesh ){
@@ -54,13 +54,13 @@ function PObjects(){
 
       pos.set(x, y, z);
 			quat.set(0,0,0,1);
-      var amoVector = new Ammo.btVector3( sx * 0.5, sy * 0.5, sz * 0.5 );
+      var amoVector = new Ammo.btVector3( 9  , 1 , 1 );
 
-
-      amoVector.visible = true;
       var shape = new Ammo.btBoxShape( amoVector);
 
-      shape.setMargin(0.02);
+      console.log(shape);
+
+      shape.setMargin(0.05);
       createRigidBody( mesh, shape, mass, pos, quat );
 
 
@@ -71,6 +71,46 @@ function PObjects(){
 
   	});
 
+  }
+
+  this.loadJSONModel = function ( sx, sy, sz, objPath, mass) {
+
+    mixer = new THREE.AnimationMixer( scene );
+		var loader = new THREE.JSONLoader();
+
+    loader.load( objPath, function ( geometry, materials ) {
+			//adjust color a bit
+		  //var material = materials[0];
+
+			//materials.morphTargets = true;
+			//materials.color.setHex( 0xFACC2E );
+
+      console.log(geometry);
+
+			var mesh = new THREE.Mesh( geometry, materials );
+
+      //console.log(mesh);
+
+      //mesh.scale.set(40, 40, 40);
+
+      //mesh.position.set(-80,50,-14);
+      // mesh.rotation.y = -Math.PI/2;
+			// mesh.matrixAutoUpdate = false;
+			// mesh.updateMatrix();
+
+      var pos = new THREE.Vector3();
+  		var quat = new THREE.Quaternion();
+      //var mass = 10;
+
+      pos.set(10,20,-14);
+			quat.set(0,0,0,1);
+      var amoVector = new Ammo.btVector3( sx * 0.5, sy * 0.5, sz * 0.5 );
+      var shape = new Ammo.btBoxShape( amoVector);
+      shape.setMargin(0.02);
+      createRigidBody( geometry, shape, mass, pos, quat );
+			//scene.add( mesh );
+
+    });
   }
 
   this.createParalellepiped = function ( sx, sy, sz, mass, pos, quat, material) {
@@ -96,9 +136,9 @@ function PObjects(){
   }
 
   this.floor = function () {
-    pos.set( 0, - 0.5, 0 );
+    pos.set( 0, -2, 0 );
     quat.set( 0, 0, 0, 1 );
-    this.createParalellepiped(2000, 1, 2000, 0, pos, quat, new THREE.MeshPhongMaterial( { color: 0xFFFFFF } ));
+    this.createParalellepiped(2000, 1, 2000, 0, pos, quat, new THREE.MeshPhongMaterial( { color: 0x21610B } ));
   }
 
   this.ball = function () {
@@ -115,7 +155,7 @@ function PObjects(){
 
     ballShape.setMargin( margin );
     pos.copy( raycaster.ray.direction );
-    pos.set( 15,15,0 );
+    pos.set( 15,15,13 );
     quat.set( 0, 0, 0, 1 );
 
     var ballBody = createRigidBody( ball, ballShape, ballMass, pos, quat );
