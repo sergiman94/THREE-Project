@@ -1,3 +1,5 @@
+
+
 {<!DOCTYPE html>
 <html lang = "en">
 	<head>
@@ -41,7 +43,14 @@
 
 	<script>
 
-		// -------------------------GLOBAL VARIABLES-------------------------------\\
+	//----------------------------------------------------
+	// Author: Sergiman94 - Sergio Andres Manrique
+	// Universidad San Buenaventura
+	// Curso de Computacion Grafica
+	// Profesor Andres Felipe Barco Santa - Anfelbar
+	//----------------------------------------------------
+
+	// -------------------------GLOBAL VARIABLES-------------------------------\\
 
 		var axis;
 		var clock = new THREE.Clock();
@@ -87,7 +96,9 @@
 
 		var baseMaterial = new THREE.MeshPhongMaterial( { color: 0x606060 });
 		var material1 = new THREE.MeshPhongMaterial({ color: 0xffffff });
-
+		var material2 = new THREE.MeshPhongMaterial({ color: 0x2ECCFA });
+		var material3 = new THREE.MeshPhongMaterial({ color: 0xFF4000 });
+		var material4 = new THREE.MeshPhongMaterial({ color: 0x81F79F });
 		// -----------------------MAIN FUNCTIONS-----------------------------------\\
 
 		init();
@@ -116,7 +127,7 @@
 			scene = new THREE.Scene();
 			scene.background = new THREE.Color( 0xbfd1e5 );
 			scene.fog = new THREE.Fog( 0xE6E6E6, 0, 750 );
-			camera.position.set( -1.5, 12, 27);
+			camera.position.set( 16, 45, 12);
 
 			//Orbit controls
 			controls();
@@ -282,6 +293,10 @@
 
 		//-------------------------OBJECT FUNCTIONS--------------------------------\\
 
+		function axisHelper(size) {
+			axis.show(size);
+		}
+
 		function createObjects() {
 
 			//objects
@@ -304,38 +319,25 @@
 			//ship model
 			//objects.loadOBJModel(3, 5, 10, 1, 0.5, 1, "models/Pirateship.obj", 10);
 
-			objects.loadOBJModel(0,5,0,1,0.5,1,"table/Billiard_2.obj", 2);
+			//billiardTable
+			//billiardTable("table/Billiard_2.obj");
 
-			// things
-			pos.set(3,5,14);
-			quat.set(0,50,0,1);
-			objects.createParalellepiped(5, 5, 0.5, 50, pos, quat, material2);
+			// recipients
+			//wall(3, 5, 14, 1, 100);
+			containers(1000);
 
 			//Axis
-			//axis.show(200);
+			axisHelper(200);
 
 			// ball
-			objects.ball();
-
-			var baseUrl = "table/base.json";
-			var edgesUrl = "table/edges.json";
-			var feltUrl = "table/felt.json";
-			var pocketBottomsUrl = "table/pocket_bottoms.json";
-			var pocketsUrl = "table/felt.json"
-
-			//billiard
-			//model.modelLoadWithJSON(baseUrl);
-
-			//model.modelLoadWithJSON(edgesUrl);
-
-			//model.modelLoadWithJSON(feltUrl);
-
-			//model.modelLoadWithJSON(pocketBottomsUrl);
-			//model.modelLoadWithJSON(pocketsUrl);
-
-			//objects.loadJSONModel(5,5,5, baseUrl);
+			ball();
 
 
+		}
+
+		function billiardTable(path) {
+
+			objects.loadOBJModel( 0, 5, 0, 2, 0.5, 1, path, 1);
 		}
 
 		function table(){
@@ -343,8 +345,110 @@
 			// create base
 			pos.set(0,0,0);
 			quat.set(0,0,0,1);
-			objects.createParalellepiped( 50, 1, 50, 50, pos, quat, baseMaterial);
+			objects.createParalellepiped( 50, 1, 50, 10000, pos, quat, baseMaterial);
 
+		}
+
+		function containers(mass) {
+
+
+			// Middle Cubicle (1)
+
+			var pos_1 = pos.set( 0, 0, 4);
+			var quat_1 = quat.set(0,0,0,1);
+		 	objects.createParalellepiped(1, 5, 7, mass, pos_1, quat_1, material1);
+
+			var pos_2 = pos.set( 3, 0, 0);
+			var quat_2 = quat.set(0,0,0,1);
+			objects.createParalellepiped(7, 5, 1, mass, pos_2, quat_2, material2);
+
+			var pos_3 = pos.set( 6, 0, 4);
+			var quat_3 = quat.set(0,0,0,1);
+			objects.createParalellepiped(1, 5, 7, mass, pos_3, quat_3, material3);
+
+			var pos_4 = pos.set( 3, 0, 8);
+			var quat_4 = quat.set(0,0,0,1);
+			objects.createParalellepiped(7, 5, 1, mass, pos_3, quat_3, material4);
+
+			// Second Cubicle (2)
+
+			var pos_5 = pos.set( 0, 0, -14);
+			var quat_5 = quat.set(0,0,0,1);
+		 	objects.createParalellepiped(1, 5, 7, mass, pos_5, quat_5, material1);
+
+			var pos_6 = pos.set( 3, 0, -18);
+			var quat_6 = quat.set(0,0,0,1);
+			objects.createParalellepiped(7, 5, 1, mass, pos_6, quat_6, material2);
+
+			var pos_7 = pos.set( 6, 0, -14);
+			var quat_7 = quat.set(0,0,0,1);
+			objects.createParalellepiped(1, 5, 7, mass, pos_7, quat_7, material3);
+
+			var pos_8 = pos.set( 3, 0, -10);
+			var quat_8 = quat.set(0,0,0,1);
+			objects.createParalellepiped(7, 5, 1, mass, pos_8, quat_8, material4);
+
+			//Third Cubicle (3)
+
+			var pos_6 = pos.set( 0, 0, 18);
+			var quat_6 = quat.set(0,0,0,1);
+		 	objects.createParalellepiped(1, 5, 7, mass, pos_5, quat_6, material1);
+
+			var pos_6 = pos.set( 3, 0, 14);
+			var quat_6 = quat.set(0,0,0,1);
+			objects.createParalellepiped(7, 5, 1, mass, pos_6, quat_6, material2);
+
+			var pos_7 = pos.set( 6, 0, 18);
+			var quat_7 = quat.set(0,0,0,1);
+			objects.createParalellepiped(1, 5, 7, mass, pos_7, quat_7, material3);
+
+			var pos_8 = pos.set( 3, 0, 22);
+			var quat_8 = quat.set(0,0,0,1);
+			objects.createParalellepiped(7, 5, 1, mass, pos_8, quat_8, material4);
+
+			//Fourth Cubicle (4)
+
+			var pos_10 = pos.set( 15, 0, 4);
+			var quat_10 = quat.set(0,0,0,1);
+		 	objects.createParalellepiped(1, 5, 7, mass, pos_10, quat_10, material1);
+
+			var pos_11 = pos.set( 18, 0, 0);
+			var quat_11 = quat.set(0,0,0,1);
+			objects.createParalellepiped(7, 5, 1, mass, pos_11, quat_11, material2);
+
+			var pos_12 = pos.set( 21, 0, 4);
+			var quat_12 = quat.set(0,0,0,1);
+			objects.createParalellepiped(1, 5, 7, mass, pos_12, quat_12, material3);
+
+			var pos_13 = pos.set( 18, 0, 8);
+			var quat_13 = quat.set(0,0,0,1);
+			objects.createParalellepiped(7, 5, 1, mass, pos_8, quat_13, material4);
+
+			//Fifth Cubicle
+
+			var pos_14 = pos.set( -17, 0, 4);
+			var quat_14 = quat.set(0,0,0,1);
+		 	objects.createParalellepiped(1, 5, 7, mass, pos_14, quat_14, material1);
+
+			var pos_15 = pos.set( -14, 0, 0);
+			var quat_15 = quat.set(0,0,0,1);
+			objects.createParalellepiped(7, 5, 1, mass, pos_15, quat_15, material2);
+
+			var pos_16 = pos.set( -11, 0, 4);
+			var quat_16 = quat.set(0,0,0,1);
+			objects.createParalellepiped(1, 5, 7, mass, pos_16, quat_16, material3);
+
+			var pos_17 = pos.set( -14, 0, 8);
+			var quat_17 = quat.set(0,0,0,1);
+			objects.createParalellepiped(7, 5, 1, mass, pos_17, quat_17, material4);
+
+
+
+		}
+
+		function ball() {
+
+			objects.ball();
 		}
 
 

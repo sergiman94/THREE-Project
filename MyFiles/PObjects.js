@@ -1,3 +1,10 @@
+//----------------------------------------------------
+// Author: Sergiman94 - Sergio Andres Manrique
+// Universidad San Buenaventura
+// Curso de Computacion Grafica
+// Profesor Andres Felipe Barco Santa - Anfelbar
+//----------------------------------------------------
+
 var clock = new THREE.Clock();
 var floorObject;
 var clickRequest = false;
@@ -38,8 +45,11 @@ function PObjects(){
     var objLoader = new THREE.OBJLoader();
   	objLoader.load(modelObj, function(mesh){
 
-
       mesh.scale.set(5, 5, 5);
+
+      var mScale = mesh.scale;
+
+      //console.log(mScale);
 
       mesh.traverse(function(node){
   			if( node instanceof THREE.Mesh ){
@@ -54,11 +64,11 @@ function PObjects(){
 
       pos.set(x, y, z);
 			quat.set(0,0,0,1);
-      var amoVector = new Ammo.btVector3( 9  , 1 , 1 );
+      var amoVector = new Ammo.btVector3( 20 , 0, 0.5);
 
       var shape = new Ammo.btBoxShape( amoVector);
 
-      console.log(shape);
+      //console.log(shape);
 
       shape.setMargin(0.05);
       createRigidBody( mesh, shape, mass, pos, quat );
@@ -85,7 +95,7 @@ function PObjects(){
 			//materials.morphTargets = true;
 			//materials.color.setHex( 0xFACC2E );
 
-      console.log(geometry);
+      //console.log(geometry);
 
 			var mesh = new THREE.Mesh( geometry, materials );
 
@@ -107,6 +117,9 @@ function PObjects(){
       var amoVector = new Ammo.btVector3( sx * 0.5, sy * 0.5, sz * 0.5 );
       var shape = new Ammo.btBoxShape( amoVector);
       shape.setMargin(0.02);
+
+
+
       createRigidBody( geometry, shape, mass, pos, quat );
 			//scene.add( mesh );
 
@@ -115,13 +128,28 @@ function PObjects(){
 
   this.createParalellepiped = function ( sx, sy, sz, mass, pos, quat, material) {
 
-    var threeObject = new THREE.Mesh( new THREE.BoxGeometry( sx, sy, sz, 1, 1, 1 ), material );
-    var shape = new Ammo.btBoxShape( new Ammo.btVector3( sx * 0.5, sy * 0.5, sz * 0.5 ) );
+    var geometry = new THREE.BoxGeometry(sx, sy, sz);
+
+    var threeObject = new THREE.Mesh( geometry, material );
+
+    var shapeVector = new Ammo.btVector3( sx * 0.5, sy * 0.5, sz * 0.5 );
+
+    var shape = new Ammo.btBoxShape( shapeVector);
+
+
     shape.setMargin( margin );
+
     createRigidBody( threeObject, shape, mass, pos, quat );
 
     threeObject.castShadow = true
     threeObject.receiveShadow = true;
+
+    group.add(threeObject);
+
+
+
+
+    //console.log(geometry);
 
 
     // textureLoader.load( "models/grid.png", function( texture ) {
@@ -132,7 +160,7 @@ function PObjects(){
     // ground.material.needsUpdate = true;
     //} );
 
-    return threeObject;
+    return geometry;
   }
 
   this.floor = function () {
@@ -155,7 +183,7 @@ function PObjects(){
 
     ballShape.setMargin( margin );
     pos.copy( raycaster.ray.direction );
-    pos.set( 15,15,13 );
+    pos.set( 15,15,18 );
     quat.set( 0, 0, 0, 1 );
 
     var ballBody = createRigidBody( ball, ballShape, ballMass, pos, quat );
@@ -184,6 +212,7 @@ function createRigidBody( threeObject, physicsShape, mass, pos, quat ) {
     physicsShape.calculateLocalInertia( mass, localInertia );
 
     var rbInfo = new Ammo.btRigidBodyConstructionInfo( mass, motionState, physicsShape, localInertia );
+
     var body = new Ammo.btRigidBody( rbInfo );
 
     threeObject.userData.physicsBody = body;

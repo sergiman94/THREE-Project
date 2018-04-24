@@ -1,3 +1,9 @@
+//----------------------------------------------------
+// Author: Sergiman94 - Sergio Andres Manrique
+// Universidad San Buenaventura
+// Curso de Computacion Grafica
+// Profesor Andres Felipe Barco Santa - Anfelbar
+//----------------------------------------------------
 
 function CrateObject() {
 
